@@ -53,7 +53,8 @@ class MaxMindGeoLite2Reader(metaclass=Singleton):
         return self.reader.city(ip)
 
     def __del__(self):
-        self.reader.close()
+        if self.reader:
+            self.reader.close()
 
 
 class MaxMindGeoLite2:
