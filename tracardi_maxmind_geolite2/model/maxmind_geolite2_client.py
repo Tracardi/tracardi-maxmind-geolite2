@@ -4,12 +4,12 @@ import geoip2.webservice
 import os
 from pydantic import BaseModel
 from tracardi.domain.entity import Entity
-
-local = os.path.dirname(__file__)
+from tracardi.service.singleton import Singleton
 
 
 class PluginConfiguration(BaseModel):
     source: Entity
+    ip: str = None
 
 
 class GeoLiteCredentials(BaseModel):
@@ -23,7 +23,7 @@ class GeoIpConfiguration(BaseModel):
     database: str = None
 
     def get_local_database(self):
-        return os.path.join(local, f'../database/{self.database}')
+        return os.path.join(self.database)
 
     def is_local(self):
         return self.database is not None
@@ -32,7 +32,6 @@ class GeoIpConfiguration(BaseModel):
         return self.webservice is not None
 
 
-# class MaxMindGeoLite2Client(metaclass=Singleton):
 class MaxMindGeoLite2Client:
 
     def __init__(self, credentials: GeoLiteCredentials):
@@ -45,7 +44,7 @@ class MaxMindGeoLite2Client:
         await self.client.close()
 
 
-class MaxMindGeoLite2Reader:
+class MaxMindGeoLite2Reader(metaclass=Singleton):
 
     def __init__(self, database):
         self.reader = geoip2.database.Reader(database)
@@ -72,4 +71,5 @@ class MaxMindGeoLite2:
         result = self.client.read(ip)
         if isinstance(self.client, MaxMindGeoLite2Client):
             result = await result
+            await self.client.close()
         return result

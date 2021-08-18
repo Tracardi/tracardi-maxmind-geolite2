@@ -5,6 +5,7 @@ from tracardi.domain.source import SourceRecord
 from tracardi_plugin_sdk.domain.register import Plugin, Spec, MetaData
 from tracardi_plugin_sdk.action_runner import ActionRunner
 from tracardi_plugin_sdk.domain.result import Result
+from tracardi_dot_notation.dot_accessor import DotAccessor
 
 from tracardi_maxmind_geolite2.model.maxmind_geolite2_client import GeoIpConfiguration, \
     PluginConfiguration, MaxMindGeoLite2
@@ -33,10 +34,18 @@ class GeoIPAction(ActionRunner):
         return plugin
 
     def __init__(self, **kwargs):
-        self.config = PluginConfiguration(**kwargs)
         self.client = None  # type: Optional[MaxMindGeoLite2]
+        self.config = PluginConfiguration(**kwargs)
 
-    async def run(self, ip: str):
+        if self.config.ip is None:
+            raise ValueError("IP not set. Please check configuration.")
+
+    async def run(self, payload):
+
+        dot = DotAccessor(self.profile, self.session, payload, self.event, self.flow)
+
+        ip = dot[self.config.ip]
+
         location = await self.client.fetch(ip)
 
         result = {
@@ -60,15 +69,16 @@ def register() -> Plugin:
         spec=Spec(
             module='tracardi_maxmind_geolite2.plugin',
             className='GeoIPAction',
-            inputs=["ip"],
+            inputs=["payload"],
             outputs=['location'],
-            version='0.1',
+            version='0.1.3',
             license="MIT",
             author="Risto Kowaczewski",
             init={
                 "source": {
                     "id": None,
-                }
+                },
+                "ip": "event@metadata.ip"
             }
         ),
         metadata=MetaData(
