@@ -17,7 +17,7 @@ class GeoIPAction(ActionRunner):
     async def build(**kwargs) -> 'GeoIPAction':
         plugin = GeoIPAction(**kwargs)
         source_config_record = await Entity(id=plugin.config.source.id). \
-            storage('source'). \
+            storage('resource'). \
             load(ResourceRecord)  # type: ResourceRecord
 
         if source_config_record is None:
