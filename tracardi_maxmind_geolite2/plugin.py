@@ -1,7 +1,7 @@
 from typing import Optional
 
 from tracardi.domain.entity import Entity
-from tracardi.domain.source import SourceRecord
+from tracardi.domain.source import ResourceRecord
 from tracardi_plugin_sdk.domain.register import Plugin, Spec, MetaData
 from tracardi_plugin_sdk.action_runner import ActionRunner
 from tracardi_plugin_sdk.domain.result import Result
@@ -18,7 +18,7 @@ class GeoIPAction(ActionRunner):
         plugin = GeoIPAction(**kwargs)
         source_config_record = await Entity(id=plugin.config.source.id). \
             storage('source'). \
-            load(SourceRecord)  # type: SourceRecord
+            load(ResourceRecord)  # type: ResourceRecord
 
         if source_config_record is None:
             raise ValueError('Source id {} for geoip plugin does not exist.'.format(plugin.config.source.id))
