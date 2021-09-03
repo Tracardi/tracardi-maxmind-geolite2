@@ -1,7 +1,5 @@
 from typing import Optional
-
-from tracardi.domain.entity import Entity
-from tracardi.domain.source import ResourceRecord
+from tracardi.service.source_reader import read_source
 from tracardi_plugin_sdk.domain.register import Plugin, Spec, MetaData
 from tracardi_plugin_sdk.action_runner import ActionRunner
 from tracardi_plugin_sdk.domain.result import Result
@@ -16,17 +14,9 @@ class GeoIPAction(ActionRunner):
     @staticmethod
     async def build(**kwargs) -> 'GeoIPAction':
         plugin = GeoIPAction(**kwargs)
-        source_config_record = await Entity(id=plugin.config.source.id). \
-            storage('resource'). \
-            load(ResourceRecord)  # type: ResourceRecord
-
-        if source_config_record is None:
-            raise ValueError('Source id {} for geoip plugin does not exist.'.format(plugin.config.source.id))
-
-        source_config = source_config_record.decode()
-
+        resource = await read_source(resource_id=plugin.config.source.id)
         geoip2_config = GeoIpConfiguration(
-            **source_config.config
+            **resource.config
         )
 
         plugin.client = MaxMindGeoLite2(geoip2_config)
