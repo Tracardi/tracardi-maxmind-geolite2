@@ -1,5 +1,5 @@
 from typing import Optional
-from tracardi.service.source_reader import read_source
+from tracardi.service.storage.helpers.source_reader import read_source
 from tracardi_plugin_sdk.domain.register import Plugin, Spec, MetaData
 from tracardi_plugin_sdk.action_runner import ActionRunner
 from tracardi_plugin_sdk.domain.result import Result
