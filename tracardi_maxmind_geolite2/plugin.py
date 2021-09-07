@@ -61,7 +61,7 @@ def register() -> Plugin:
             className='GeoIPAction',
             inputs=["payload"],
             outputs=['location'],
-            version='0.1.4',
+            version='0.1.5',
             license="MIT",
             author="Risto Kowaczewski",
             init={
