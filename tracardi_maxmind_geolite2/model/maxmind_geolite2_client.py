@@ -9,7 +9,7 @@ from tracardi.service.singleton import Singleton
 
 class PluginConfiguration(BaseModel):
     source: Entity
-    ip: str = None
+    ip: str
 
 
 class GeoLiteCredentials(BaseModel):

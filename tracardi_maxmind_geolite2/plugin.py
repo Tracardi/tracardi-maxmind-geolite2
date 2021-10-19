@@ -9,29 +9,33 @@ from tracardi_maxmind_geolite2.model.maxmind_geolite2_client import GeoIpConfigu
     PluginConfiguration, MaxMindGeoLite2
 
 
+def validate(config: dict) -> PluginConfiguration:
+    return PluginConfiguration(**config)
+
+
 class GeoIPAction(ActionRunner):
 
     @staticmethod
     async def build(**kwargs) -> 'GeoIPAction':
-        plugin = GeoIPAction(**kwargs)
-        resource = await read_source(resource_id=plugin.config.source.id)
+        config = validate(kwargs)
+
+        resource = await read_source(resource_id=config.source.id)
         geoip2_config = GeoIpConfiguration(
             **resource.config
         )
 
-        plugin.client = MaxMindGeoLite2(geoip2_config)
+        client = MaxMindGeoLite2(geoip2_config)
 
-        return plugin
+        return GeoIPAction(config, client)
 
-    def __init__(self, **kwargs):
-        self.client = None  # type: Optional[MaxMindGeoLite2]
-        self.config = PluginConfiguration(**kwargs)
+    def __init__(self, config: PluginConfiguration, client: MaxMindGeoLite2):
+        self.client = client
+        self.config = config
 
         if self.config.ip is None:
             raise ValueError("IP not set. Please check configuration.")
 
     async def run(self, payload):
-
         dot = DotAccessor(self.profile, self.session, payload, self.event, self.flow)
 
         ip = dot[self.config.ip]
