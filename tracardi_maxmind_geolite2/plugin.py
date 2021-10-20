@@ -62,7 +62,7 @@ def register() -> Plugin:
             className='GeoIPAction',
             inputs=["payload"],
             outputs=['location'],
-            version='0.1.7',
+            version='0.6.0',
             license="MIT",
             author="Risto Kowaczewski",
             manual="geo_ip_locator",
@@ -99,7 +99,7 @@ def register() -> Plugin:
         ),
         metadata=MetaData(
             name='GeoIp service',
-            desc='Converts IP to location information.',
+            desc='This plugin converts IP to location information.',
             type='flowNode',
             width=200,
             height=100,

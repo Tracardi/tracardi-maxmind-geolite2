@@ -5,8 +5,8 @@ with open("README.md", "r") as fh:
 
 setup(
     name='tracardi-maxmind-geolite2',
-    version='0.1.7',
-    description='The purpose of this plugin is to connect to maxmind geolite2 and retrieve location data.',
+    version='0.6.0',
+    description='This plugins connect to maxmind geolite2 service and retrieve location data.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Risto Kowaczewski',
