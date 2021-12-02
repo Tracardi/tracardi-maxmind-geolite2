@@ -3,7 +3,7 @@ from tracardi_maxmind_geolite2.plugin import GeoIPAction
 
 kwargs = {
     "source": {
-        "id": "b1d4ea68-f6d5-428e-a642-6fb827ae232c"
+        "id": "3a77663c-ae26-4e91-9f24-fdb3b0f295fd"
     },
     "ip": "payload@ip"
 }

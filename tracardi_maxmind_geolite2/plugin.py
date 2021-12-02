@@ -3,7 +3,7 @@ from tracardi_plugin_sdk.domain.register import Plugin, Spec, MetaData, FormGrou
 from tracardi_plugin_sdk.action_runner import ActionRunner
 from tracardi_plugin_sdk.domain.result import Result
 from tracardi_dot_notation.dot_accessor import DotAccessor
-
+from tracardi.domain.resource import ResourceCredentials, Resource
 from tracardi_maxmind_geolite2.model.maxmind_geolite2_client import GeoIpConfiguration, \
     PluginConfiguration, MaxMindGeoLite2, GeoLiteCredentials
 
@@ -17,19 +17,14 @@ class GeoIPAction(ActionRunner):
     @staticmethod
     async def build(**kwargs) -> 'GeoIPAction':
         config = validate(kwargs)
+        resource = await storage.driver.resource.load(id=config.source.id)  # type: Resource
+        return GeoIPAction(config, resource.credentials)
 
-        resource = await storage.driver.resource.load(id=config.source.id)
+    def __init__(self, config: PluginConfiguration, credentials: ResourceCredentials):
         geoip2_config = GeoIpConfiguration(
-            webservice=GeoLiteCredentials(
-                **resource.config
-            )
+            webservice=credentials.get_credentials(self, output=GeoLiteCredentials)
         )
-        client = MaxMindGeoLite2(geoip2_config)
-
-        return GeoIPAction(config, client)
-
-    def __init__(self, config: PluginConfiguration, client: MaxMindGeoLite2):
-        self.client = client
+        self.client = MaxMindGeoLite2(geoip2_config)
         self.config = config
 
     async def run(self, payload):
@@ -62,7 +57,7 @@ def register() -> Plugin:
             className='GeoIPAction',
             inputs=["payload"],
             outputs=['location'],
-            version='0.6.0',
+            version='0.6.0.1',
             license="MIT",
             author="Risto Kowaczewski",
             manual="geo_ip_locator",
@@ -81,7 +76,7 @@ def register() -> Plugin:
                             description="Select Maxmind Geolite2 server resource. Credentials from selected resource "
                                         "will be used to connect the service.",
                             required=True,
-                            component=FormComponent(type="resource", props={"label": "resource"})
+                            component=FormComponent(type="resource", props={"label": "resource", "tag": "geo-locator"})
                         )
                     ]
                 ),

@@ -1,5 +1,5 @@
-tracardi_plugin_sdk>=0.6.21
-tracardi
+tracardi_plugin_sdk>=0.6.30
+tracardi>=0.6.23
 tracardi_dot_notation
 geoip2~=4.2.0
 

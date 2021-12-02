@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='tracardi-maxmind-geolite2',
-    version='0.6.0',
+    version='0.6.0.1',
     description='This plugins connect to maxmind geolite2 service and retrieve location data.',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,8 +13,8 @@ setup(
     author_email='risto.kowaczewski@gmail.com',
     packages=['tracardi_maxmind_geolite2'],
     install_requires=[
-        'tracardi_plugin_sdk>=0.6.21',
-        'tracardi',
+        'tracardi_plugin_sdk>=0.6.30',
+        'tracardi>=0.6.23',
         'tracardi_dot_notation',
         'geoip2~=4.2.0'
     ],
